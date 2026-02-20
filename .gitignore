@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# CDK
+infrastructure/cdk.out/
+infrastructure/dist/
+infrastructure/*.js
+infrastructure/*.d.ts
+!infrastructure/jest.config.js
+
+# Lambda build
+functions/company-scraper/node_modules/
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+*.local

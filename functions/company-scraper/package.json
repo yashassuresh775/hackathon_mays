@@ -1,0 +1,10 @@
+{
+  "name": "company-scraper",
+  "version": "1.0.0",
+  "description": "Lambda: search web for company and store article URLs in S3",
+  "main": "index.js",
+  "dependencies": {
+    "node-fetch": "^2.7.0",
+    "@aws-sdk/client-ssm": "^3.0.0"
+  }
+}
