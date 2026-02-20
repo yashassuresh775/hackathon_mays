@@ -1,0 +1,80 @@
+.interview-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.interview-header {
+  margin-bottom: 1.5rem;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  color: var(--maroon);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.interview-header h1 {
+  font-size: 1.5rem;
+  margin: 0 0 0.25rem 0;
+}
+
+.interview-header p {
+  font-size: 0.9rem;
+  color: var(--gray);
+  margin: 0;
+}
+
+.brief-text,
+.packet-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  max-height: 50vh;
+  overflow-y: auto;
+  margin: 0;
+}
+
+.response-card {
+  border-left: 4px solid var(--maroon);
+}
+
+.response-block {
+  margin-bottom: 1rem;
+}
+
+.response-block h3 {
+  font-size: 0.95rem;
+  margin: 0 0 0.25rem 0;
+}
+
+.corrections {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.response-block ul {
+  margin: 0.25rem 0 0 0;
+  padding-left: 1.25rem;
+}
+
+.hint-card {
+  background: var(--off-white);
+  color: var(--gray);
+}
+
+.hint-card p {
+  margin: 0;
+}
+
+.loading {
+  text-align: center;
+  color: var(--gray);
+}

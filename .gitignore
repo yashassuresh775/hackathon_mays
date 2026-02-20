@@ -1,0 +1,28 @@
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/build/
+
+# Env (do not commit keys)
+.env
+env.workshop
+terraform/terraform.tfvars
+
+# Python / Lambda
+__pycache__/
+*.py[cod]
+*.zip
+.Python
+venv/
+.venv/
+
+# Amplify / Node
+node_modules/
+amplify/dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.DS_Store

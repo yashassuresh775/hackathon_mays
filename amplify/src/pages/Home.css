@@ -1,0 +1,132 @@
+.result-actions {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--gray-light);
+}
+
+.result-actions .btn-primary,
+.result-actions .btn-secondary {
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.send-packet {
+  margin-top: 1rem;
+}
+
+.send-packet h3 {
+  font-size: 1rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.send-packet label {
+  display: block;
+  font-size: 0.875rem;
+  margin-top: 0.75rem;
+}
+
+.send-packet input[type="email"] {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.25rem;
+  border: 1px solid var(--gray-light);
+  border-radius: 6px;
+}
+
+.link-box {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  align-items: center;
+}
+
+.link-box input {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  border: 1px solid var(--gray-light);
+  border-radius: 6px;
+}
+
+.btn-small {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+  background: var(--gray-light);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--off-white);
+  border: 1px solid var(--gray-light);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.upload-card input[type="file"] {
+  margin-bottom: 0.5rem;
+}
+
+.upload-done {
+  margin-left: 0.5rem;
+  color: var(--maroon);
+  font-size: 0.9rem;
+}
+
+.test-hint {
+  font-size: 0.9rem;
+  color: var(--gray);
+  margin: 0 0 0.5rem 0;
+}
+
+.test-companies {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.btn-test {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.875rem;
+  background: var(--off-white);
+  border: 1px solid var(--gray-light);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-test:hover {
+  background: var(--gray-light);
+}
+
+.full-brief {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--gray-light);
+}
+
+.full-section {
+  margin-bottom: 1.5rem;
+}
+
+.full-section h3 {
+  font-size: 1rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.brief-full,
+.packet-full {
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 1rem;
+  background: var(--off-white);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin: 0;
+}
