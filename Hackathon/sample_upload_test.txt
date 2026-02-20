@@ -1,0 +1,5 @@
+Sample Company Overview - For Upload Test
+This is a test document for the Interview AI app.
+Company: Sample Corp  Industry: Technology  Location: Austin, TX
+Key points: Founded 2020. Product: API analytics platform. Team of 25.
+Upload this file, then generate a brief to see it used as context.

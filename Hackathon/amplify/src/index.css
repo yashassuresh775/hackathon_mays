@@ -1,0 +1,35 @@
+:root {
+  --maroon: #500000;
+  --maroon-light: #6d0a0a;
+  --white: #ffffff;
+  --off-white: #f8f6f4;
+  --gray: #5c5c5c;
+  --gray-light: #e5e5e5;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--off-white);
+  color: #1a1a1a;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button {
+  font-family: var(--font-sans);
+  cursor: pointer;
+}
+
+input, textarea {
+  font-family: var(--font-sans);
+}
