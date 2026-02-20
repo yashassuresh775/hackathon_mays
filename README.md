@@ -45,6 +45,8 @@ After deploy, set `SERPAPI_API_KEY` in the Lambda’s environment (e.g. in the A
 ```bash
 # Install Lambda dependencies (required for packaging)
 cd functions/company-scraper && npm install && cd ../..
+cd functions/kendra-ingest && npm install && cd ../..
+cd functions/kendra-insights && npm install && cd ../..
 
 cd infrastructure
 npm install
@@ -96,6 +98,42 @@ curl "https://<CloudFrontDomain>/research/amazon/urls.json"
 
 This file is ready to be used as context for Phase 2 (e.g. Bedrock) to generate interview questions.
 
+## Phase 2: AWS Kendra – Insights extraction from company URLs
+
+After URLs are stored (Phase 1), **AWS Kendra** is used to extract insightful information from those URLs. The insights can later be passed to a Bedrock agent for generating interview questions.
+
+### Flow
+
+1. **Scrape** (Phase 1) → company URLs stored in S3 as `research/{companyKey}/urls.json`.
+2. **Ingest** → Lambda fetches each URL’s content, strips HTML to text, and indexes it in a Kendra index with metadata `companyKey` (and `sourceUri`).
+3. **Insights** → Lambda queries Kendra with a company-focused query and an attribute filter on `companyKey`, returning relevant passages as “insights”.
+
+### API (Kendra)
+
+**4. Ingest company URLs into Kendra** (run after scrape for that company)
+
+```bash
+curl -X POST "https://<CloudFrontDomain>/company/amazon/ingest"
+```
+
+Response: `documentsIngested`, `totalArticles`, and a message. The Kendra index may take a few minutes to update before insights are available.
+
+**5. Get company insights from Kendra**
+
+```bash
+curl "https://<CloudFrontDomain>/company/amazon/insights"
+```
+
+Response: `companyKey`, `query`, `count`, and `insights[]` with `excerpt`, `title`, `documentId`, `sourceUri`, and optional `score`. These insights are suitable to pass to a Bedrock agent for question generation (not implemented in this repo).
+
+### Architecture (Phase 2)
+
+- **Kendra index** (Developer Edition) – one index for all companies; documents are tagged with `companyKey` and optionally `sourceUri`.
+- **Kendra Ingest Lambda** – reads `urls.json` from S3, fetches each URL, converts HTML to text, and calls `BatchPutDocument`.
+- **Kendra Insights Lambda** – runs a Kendra `Query` with an attribute filter on `companyKey` and returns the top passages.
+
+Deploy outputs include **KendraIndexId** for reference.
+
 ### Project layout
 
 ```
@@ -108,7 +146,13 @@ hackathon_mays/
 │   ├── package.json
 │   └── tsconfig.json
 └── functions/
-    └── company-scraper/      # Lambda: search + S3 write
+    ├── company-scraper/      # Lambda: search + S3 write
+    │   ├── index.js
+    │   └── package.json
+    ├── kendra-ingest/       # Lambda: fetch URLs → Kendra BatchPutDocument
+    │   ├── index.js
+    │   └── package.json
+    └── kendra-insights/     # Lambda: Kendra Query → insights
         ├── index.js
         └── package.json
 ```

@@ -5,6 +5,7 @@ import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as kendra from 'aws-cdk-lib/aws-kendra';
 import { join } from 'path';
 
 export interface CompanyResearchStackProps extends cdk.StackProps {
@@ -76,6 +77,82 @@ export class CompanyResearchStack extends cdk.Stack {
       );
     }
 
+    // --- Kendra: index for company insights extraction ---
+    const kendraIndexRole = new iam.Role(this, 'KendraIndexRole', {
+      assumedBy: new iam.ServicePrincipal('kendra.amazonaws.com'),
+      description: 'Role for Company Research Kendra index',
+    });
+    kendraIndexRole.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName('CloudWatchLogsFullAccess')
+    );
+
+    const kendraIndex = new kendra.CfnIndex(this, 'CompanyInsightsIndex', {
+      name: 'company-research-insights',
+      edition: 'DEVELOPER_EDITION',
+      roleArn: kendraIndexRole.roleArn,
+      description: 'Index for extracting insights from company article URLs',
+      documentMetadataConfigurations: [
+        {
+          name: 'companyKey',
+          type: 'STRING_VALUE',
+          search: {
+            displayable: true,
+            facetable: true,
+            searchable: false,
+          },
+        },
+        {
+          name: 'sourceUri',
+          type: 'STRING_VALUE',
+          search: {
+            displayable: true,
+            facetable: false,
+            searchable: false,
+          },
+        },
+      ],
+    });
+
+    // Lambda: ingest company URLs into Kendra (fetch content, BatchPutDocument)
+    const kendraIngestFunction = new lambda.Function(this, 'KendraIngest', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'index.handler',
+      code: lambda.Code.fromAsset(join(__dirname, '../../functions/kendra-ingest')),
+      timeout: cdk.Duration.minutes(2),
+      memorySize: 512,
+      environment: {
+        BUCKET_NAME: this.bucket.bucketName,
+        KENDRA_INDEX_ID: kendraIndex.attrId,
+      },
+    });
+    this.bucket.grantRead(kendraIngestFunction);
+    kendraIngestFunction.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['kendra:BatchPutDocument', 'kendra:BatchGetDocumentStatus'],
+        resources: [kendraIndex.attrArn],
+      })
+    );
+
+    // Lambda: query Kendra for company insights
+    const kendraInsightsFunction = new lambda.Function(this, 'KendraInsights', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'index.handler',
+      code: lambda.Code.fromAsset(join(__dirname, '../../functions/kendra-insights')),
+      timeout: cdk.Duration.seconds(30),
+      memorySize: 256,
+      environment: {
+        KENDRA_INDEX_ID: kendraIndex.attrId,
+      },
+    });
+    kendraInsightsFunction.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['kendra:Query'],
+        resources: [kendraIndex.attrArn],
+      })
+    );
+
     // REST API to trigger scraper
     this.api = new apigateway.RestApi(this, 'CompanyResearchApi', {
       restApiName: 'Company Research API',
@@ -93,6 +170,10 @@ export class CompanyResearchStack extends cdk.Stack {
 
     const company = this.api.root.addResource('company').addResource('{companyKey}');
     company.addMethod('GET', new apigateway.LambdaIntegration(this.scraperFunction));
+    const companyIngest = company.addResource('ingest');
+    companyIngest.addMethod('POST', new apigateway.LambdaIntegration(kendraIngestFunction));
+    const companyInsights = company.addResource('insights');
+    companyInsights.addMethod('GET', new apigateway.LambdaIntegration(kendraInsightsFunction));
 
     // CloudFront distribution: API as origin for deployment / access
     this.distribution = new cloudfront.Distribution(this, 'CompanyResearchDistribution', {
@@ -131,6 +212,10 @@ export class CompanyResearchStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'CloudFrontUrl', {
       value: `https://${this.distribution.distributionDomainName}`,
       description: 'CloudFront URL for API and S3 access',
+    });
+    new cdk.CfnOutput(this, 'KendraIndexId', {
+      value: kendraIndex.attrId,
+      description: 'Kendra index ID for company insights extraction',
     });
   }
 }

@@ -1,0 +1,9 @@
+{
+  "name": "kendra-insights",
+  "version": "1.0.0",
+  "description": "Lambda: query Kendra for company insights from indexed URLs",
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-kendra": "^3.0.0"
+  }
+}
