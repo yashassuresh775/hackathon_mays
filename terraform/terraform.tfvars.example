@@ -1,0 +1,9 @@
+# Copy to terraform.tfvars and set values. terraform.tfvars is gitignored.
+# Use the same region as your existing S3 buckets (e.g. us-west-2).
+# Check: aws s3api get-bucket-location --bucket interview-ai-packets-hackathon-<ACCOUNT_ID>
+
+aws_region = "us-west-2"
+
+# Optional overrides:
+# project_name = "interview-ai"
+# environment   = "hackathon"
